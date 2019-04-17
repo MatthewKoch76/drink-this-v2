@@ -1,0 +1,12 @@
+<mat-card class="form-card">
+  <mat-card-content>
+    <h1>Form card title</h1>
+      <mat-form-field>
+        <textarea matInput rows="6" [(ngModel)]="enteredValue"></textarea>
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+      <button (click)="onAddPost()" mat-raised-button color="primary" >POST</button>
+    </mat-card-actions>
+</mat-card>
+
