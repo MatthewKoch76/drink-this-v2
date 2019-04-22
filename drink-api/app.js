@@ -31,10 +31,13 @@ app.post('/api/posts', (req, res, next) => {
     title: req.body.title,
     content: req.body.content
   });
-  post.save();
-  res.status(201).json({
-    info: 'post added'
-  })
+  post.save()
+    .then(createdPost => {
+      res.status(201).json({
+        info: 'post added',
+        postId: createdPost._id
+      });
+    });
 });
 
 app.get('/api/posts', (req, res) => {
