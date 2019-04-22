@@ -1,5 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const Post = require('../drink-api/models/post');
 const app = express();
 
 app.use((req, res, next) => {
@@ -9,32 +11,52 @@ app.use((req, res, next) => {
   next();
 })
 
+mongoose.connect('mongodb+srv://Matthew:gYBM5yVnvMtROKMv@drink-this-2-rz6uj.mongodb.net/drinks?retryWrites=true', {
+    useNewUrlParser: true
+  })
+  .then(() => {
+    console.log('Connected to database')
+  })
+  .catch(() => {
+    console.group('Connection Failed')
+  });
+
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 
 app.post('/api/posts', (req, res, next) => {
-  const post = req.body;
-  console.log(post);
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content
+  });
+  post.save();
   res.status(201).json({
     info: 'post added'
   })
 });
 
-app.use('/api/posts', (req, res) => {
-  const posts = [{
-    id: '1',
-    title: "title1",
-    content: "content1"
-  },
-  {
-    id: '2',
-    title: "title2",
-    content: "content2"
-  }]
-  res.status(200).json({
-    info: 'got posts',
-    posts: posts
-  })
+app.get('/api/posts', (req, res) => {
+  Post.find()
+    .then(documents => {
+      console.log(documents);
+      res.status(200).json({
+        info: 'got posts',
+        posts: documents
+      });
+    });
+});
+
+app.delete('/api/posts/:id', (req, res) => {
+  Post.deleteOne({
+    _id: req.params.id
+  }).then(result => {
+    console.log(result);
+    res.status(200).json({
+      message: 'post deleted'
+    });
+  });
 });
 
 module.exports = app;

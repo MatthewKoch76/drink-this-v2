@@ -2,6 +2,7 @@ import { Post } from './post.model';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +14,19 @@ export class PostsService {
   constructor(private http: HttpClient) { }
 
   getPosts() {
-    this.http.get<{ info: string, posts: Post[] }>('http://localhost:3000/api/posts')
-      .subscribe((postData) => {
-        this.posts = postData.posts;
+    this.http
+      .get<{ info: string, posts: any }>('http://localhost:3000/api/posts')
+      .pipe(map(postData => {
+        return postData.posts.map(post => {
+          return {
+            title: post.title,
+            content: post.content,
+            id: post._id
+          };
+        });
+      }))
+      .subscribe(formattedPosts => {
+        this.posts = formattedPosts;
         this.postsUpdated.next([...this.posts]);
       });
   }
@@ -28,10 +39,19 @@ export class PostsService {
     const post: Post = { id: null, title: title, content: content };
     this.http
       .post<{ info: string }>('http://localhost:3000/api/posts', post)
-      .subscribe((responseData) => {
+      .subscribe(responseData => {
         console.log(responseData.info);
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
       });
+  }
+
+  deletePost(postId: string) {
+    this.http.delete(`http://localhost:3000/api/posts/${postId}`)
+    .subscribe(() => {
+      const updatedPosts = this.posts.filter(post => post.id !== postId);
+      this.posts = updatedPosts;
+      this.postsUpdated.next([...this.posts]);
+    });
   }
 }
