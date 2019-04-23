@@ -6,11 +6,12 @@
       formControlName="title"
       type="text"
       name="title"
+      id="title"
       required
       minlength="3"
       placeholder="Post Title"
       >
-      <mat-error>Need a title tho</mat-error>
+      <mat-error *ngIf="postForm.value.title.invalid">Need a title tho</mat-error>
     </mat-form-field>
     <mat-form-field>
       <textarea
@@ -18,11 +19,12 @@
       formControlName="content"
       rows="6"
       name="content"
+      id="content"
       required
       placeholder="Post Content"
       >
     </textarea>
-      <mat-error>Need some content, what is this, buzzfeed?</mat-error>
+      <mat-error *ngIf="postForm.value.content.invalid">Need some content, what is this, buzzfeed?</mat-error>
     </mat-form-field>
     <mat-card-actions>
       <button type="submit" mat-raised-button color="primary">POST</button>
