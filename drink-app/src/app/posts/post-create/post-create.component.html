@@ -1,28 +1,14 @@
 <mat-card>
-  <form [formGroup]="postForm" (submit)="onSavePost(postForm)">
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+  <form [formGroup]="postForm" (submit)="onSavePost(postForm)" *ngIf="!isLoading">
     <mat-form-field>
-      <input
-      matInput
-      formControlName="title"
-      type="text"
-      name="title"
-      id="title"
-      required
-      minlength="3"
-      placeholder="Post Title"
-      >
+      <input matInput formControlName="title" type="text" name="title" id="title" required minlength="3"
+        placeholder="Post Title">
       <mat-error *ngIf="postForm.value.title.invalid">Need a title tho</mat-error>
     </mat-form-field>
     <mat-form-field>
-      <textarea
-      matInput
-      formControlName="content"
-      rows="6"
-      name="content"
-      id="content"
-      required
-      placeholder="Post Content"
-      >
+      <textarea matInput formControlName="content" rows="6" name="content" id="content" required
+        placeholder="Post Content">
     </textarea>
       <mat-error *ngIf="postForm.value.content.invalid">Need some content, what is this, buzzfeed?</mat-error>
     </mat-form-field>
